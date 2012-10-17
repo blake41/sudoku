@@ -6,6 +6,8 @@ module Sudoku
   # This includes a row, column, block (1 of the nine 3X3 groupings of cells) or the board itself
   # Each collection is represented by an array of cells
 
+    attr_accessor :cells, :solutions
+
     def initialize cells=[]
       @cells = cells
       @solutions = []
@@ -22,7 +24,7 @@ module Sudoku
     end
 
     def values
-    # Returns an array of the remaining possible values for self
+    # Returns an array of arrays of the remaining possible values for each cell in self
       values = []
       @cells.each do |cell|
         values.push(cell.values)
@@ -197,47 +199,6 @@ module Sudoku
       segments
     end
 
-    def segment_values
-    # Helper method for solve_by_segment_values (in Board Class)
-    # Returns hash with segment ID as keys and possible solutions as values. 
-      segments = self.block_segments
-      segment_values = {}
-      i = 1
-      until i == 7
-        values = []
-        segments[i].each do |cell|
-          values << cell.values unless cell.values.length == 1
-        end
-        segment_values[i] = values.flatten.uniq.sort
-        i += 1
-      end
-      segment_values
-    end
-
-    def uniq_segment_values
-    # Helper method for solve_by_segment_values (in Board Class)
-    # Finds values that are unique to one segment.
-      uniqs = {}
-      segment_values = self.segment_values
-      segment_values.each do |key, value|
-        copy = segment_values.dup
-        copy.delete(key)
-        values = copy.values.flatten.uniq
-        value.flatten.uniq.each do |val|
-          uniqs[key] = val unless values.include?(val)  
-        end
-      end
-      uniqs
-    end
-
-    def update_segment_values segment_cells=[], val
-    # Helper method for solve_by_segment_values (in Board Class)
-    # Updates possible solutions for remainder of row or column the segment is in.
-      @cells.each do |cell|
-        unless segment_cells.include?(cell)
-          cell.update_cell_val(val)
-        end
-      end
-    end
+    
   end
 end

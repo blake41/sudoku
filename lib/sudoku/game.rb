@@ -54,19 +54,19 @@ module Sudoku
         difficulty = gets.chomp.downcase
         case difficulty
         when 'mild'
-          @board.populate_board(board.easy_game)
+          @board.populate_board(board.mild)
           self.set_board
           break
         when 'medium'
-          @board.populate_board(board.moderate_game)
+          @board.populate_board(board.medium)
           self.set_board
           break
         when 'spicy'
-          @board.populate_board(board.demanding_game)
+          @board.populate_board(board.spicy)
           self.set_board
           break
         when 'en fuego'
-          @board.populate_board(board.tough_game)
+          @board.populate_board(board.en_fuego)
           self.set_board
           break
         else

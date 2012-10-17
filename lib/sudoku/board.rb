@@ -240,22 +240,6 @@ module Sudoku
       block.solve_by_solutions
       block.solve_by_doubles
       block.solve_by_triples
-      self.solve_by_segment_values(block)
-    end
-
-    def solve_by_segment_values block=[] 
-    # This method should be in Collection Class
-    # Solves by finding unique values in block segments
-      segments = block.block_segments
-      uniqs = block.uniq_segment_values
-      uniqs.each do |segment, values|
-        if segment is <= 3
-          collection = self.row(cells[0].id)
-        else
-          collection = self.col(cells[0].id)
-        end
-        collection.update_segment_values(segments[segment], values) unless collection.nil?
-      end
     end
   end
 end
