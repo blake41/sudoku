@@ -31,27 +31,32 @@ module Sudoku
       # any other numbers other than the three possible values 
       # If self is not one of the three cells, The three values of the triple et quad
       # can be removed from self's possible solutions
-      unless self.triples_match(val) || @values.length == 1
+      
+      unless self.is_a_triple?(val) || @values.length == 1
         @values.delete_if{|x| val.include?(x)}
         self.set_solution(@values[0]) if @values.length == 1
       end
     end
 
-    def triples_match val=[]
+    def is_a_triple? val=[]
     # Helper method to determine if self is part of a triple et quad 
-      includes = true
-      if @values.length >= val.length
-        val.each do |v| 
-          includes = @values.include?(v)
-          break unless includes
-        end
+      if @values.length > 3
+        false
       else
-        @values.each do |v| 
-          includes = val.include?(v)
-          break unless includes
+        includes = true
+        if @values.length >= val.length
+          val.each do |v| 
+            includes = @values.include?(v)
+            break unless includes
+          end
+        else
+          @values.each do |v| 
+            includes = val.include?(v)
+            break unless includes
+          end
         end
+        includes
       end
-      includes
     end
 
     def row_head_id
@@ -88,9 +93,7 @@ module Sudoku
       # Block is a 3X3 collection of cells. 
       # There are 9 blocks on the board numbered 1-9 moving from top left to bottom right.
       # Method returns the block of cells self is in
-      blocks = self.populate_blocks
-      finder = true
-      block_num = 1
+      blocks = self.populate_blocks; finder = true; block_num = 1
       while finder
         blocks[block_num].each do |block_val|
           finder = false if block_val == @id

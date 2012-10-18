@@ -141,18 +141,15 @@ module Sudoku
     # Finds and returns Triples. Returned as array of 3 possible values in Triple. 
     # Triples represent 3 cells in one collection that do not contain 
     # any other numbers other than the three possible values of those three cells
-    # This indicates that no other cell in the collection could be any of those three values.
-      t_hash = {}
-      self.triples_cells.each do |cell|
-        matches = 0
-        copy = self.triples_cells.dup
-        copy.delete(cell)
-        copy.each do |c_cell|
-          matches += 1 if self.triples_match(c_cell.values, cell.values)
-          t_hash[cell.id] = cell.values if matches == 2
+    # This indicates that no other cell in the collection could be any of those three values.  
+      unless self.triples_cells.nil?
+        values = []
+        combos = self.combination_values.values
+        combos.each do |val|
+          values << val.flatten.uniq if val.flatten.uniq.length == 3
         end
+        values.flatten
       end
-      return t_hash.values.flatten.uniq if t_hash.length == 3
     end
 
     def triples_cells
@@ -161,44 +158,53 @@ module Sudoku
     # Triples must have 2 or 3 possible solutions remaining.
       t_cells = @cells.dup
       t_cells.keep_if{|c| c.values.length == 2 || c.values.length == 3}
-      t_cells
+      t_cells if t_cells.length >= 3
     end
 
-    def triples_match a=[], b=[]
+    def combination_values
     # Helper method for solve_by_triples
-    # Two arrays are a match if the arrays are equal or if all of the
-    # values in the shorter array are present in the larger array.
-      includes = true
-      if a.length >= b.length
-        b.each do |v| 
-          includes = a.include?(v)
-          break unless includes
+    # Converts potential triplet combos into hash with the hash values 
+    # the values of each cell in each combination.
+      unless self.triples_cells.nil?
+        combinations = self.potential_triplet_combos
+        cells_array = self.triples_cells
+        triple_combos = {}; i = 1
+        
+        combinations.values.each do |combo|
+          a = []
+          triple_combos[i] = a
+          combo.each {|index| a << cells_array[index].values}
+          i += 1
         end
-      else
-        a.each do |v| 
-          includes = b.include?(v)
-          break unless includes
-        end
+        triple_combos
       end
-      includes
     end
 
-    def block_segments
-    # Helper method for solve_by_segment_values (in Board Class)
-    # Every block is composed of 6 segments of 3 cells.
-    # A segment is either a 3 cell row or a 3 cell column.
-    # If a value is unique in a segment (i.e. it only exists in one segment) 
-    # it can be eliminated as a possible solution in the column or row the segment is part of.
-      segments = {}
-      segments[1] = [@cells[0], @cells[1], @cells[2]]
-      segments[2] = [@cells[3], @cells[4], @cells[5]]
-      segments[3] = [@cells[6], @cells[7], @cells[8]]
-      segments[4] = [@cells[0], @cells[3], @cells[6]]
-      segments[5] = [@cells[1], @cells[4], @cells[7]]
-      segments[6] = [@cells[2], @cells[5], @cells[8]]
-      segments
-    end
+    def potential_triplet_combos
+    # Helper method for solve_by_triples
+    # Based on the number of potential triples cells, creates all 3 cell combinations
+    # Returns a hash with the values an array representing the index of the t_cells array
+    # i.e. If there are 5 triples_cells, this method would return all 10 3 cell combinations
+      unless self.triples_cells.nil?
+        length = self.triples_cells.length
+        hash = {}; count = 1; a = 0; b = 1; c = 2
 
-    
+        loop do
+          break if a == length - 1
+              
+          while c <= length - 1
+            hash[count] = [a, b, c]
+            count += 1; c += 1
+          end
+
+          if b == length-1 && c == length
+            a += 1; b = a+1; c = a+2
+          else
+            b += 1; c = b+1
+          end
+        end
+        hash
+      end
+    end
   end
 end

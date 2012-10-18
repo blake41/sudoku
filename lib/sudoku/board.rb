@@ -14,8 +14,7 @@ module Sudoku
       @cells = []
       @solutions = []
 
-      id = 1
-      while id <= 81 
+      id = 1; while id <= 81 
         @cells << (Cell.new(id))
         id += 1
       end
@@ -24,27 +23,23 @@ module Sudoku
     def populate_board rows={} 
     # Populates board with pre-populated two-dimensional hash
     # Blank cells are represented by 0's in the hash.
-      r = 1
-      id = 1
+      r = 1; id = 1
       until r == 10
         c = 0
         until c == 9
           self.cell(id).set_solution(rows[r][c]) unless
             rows[r][c] == 0
-          c += 1
-          id += 1
+          c += 1; id += 1
         end
         r += 1
       end
     end
 
     def add_board_row row=[], row_id
-      id = (row_id * 9) - 8
-      i = 0
+      i = 0; id = (row_id * 9) - 8
       9.times do
         self.cell(id).set_solution(row[i]) unless row[i] == 0
-        i += 1
-        id += 1
+        i += 1; id += 1
       end
     end
 
@@ -130,9 +125,7 @@ module Sudoku
     # any one collection.
       id = 1
       9.times do
-        return true if self.row_by_row_id(id).errors?
-        return true if self.col_by_col_id(id).errors?
-        return true if self.block_by_block_id(id).errors?
+        return true if self.row_by_row_id(id).errors? || self.col_by_col_id(id).errors? || self.block_by_block_id(id).errors?
         id += 1
       end
       false
@@ -140,8 +133,7 @@ module Sudoku
 
     def blank_cells?
     # Returns if there are any cells yet to be populated with a solution.
-      i = 1
-      until i == 10
+      i = 1; until i == 10
         row = self.row_by_row_id(i)
         break if row.solutions.length < 9
         i += 1
@@ -159,11 +151,8 @@ module Sudoku
       elseif self.board_errors?
         puts "Sorry.  There are some errors on the board."
       else
-        i = 1
-        until i == 9
-          break unless self.row_by_row_id(i).check_solutions
-          break unless self.col_by_col_id(i).check_solutions
-          break unless self.block_by_block_id(i).check_solutions
+        i = 1; until i == 9
+          break unless self.row_by_row_id(i).check_solutions || self.col_by_col_id(i).check_solutions || self.block_by_block_id(i).check_solutions
           i += 1
         end
         self.print_board

@@ -31,7 +31,6 @@ module Sudoku
       @block = Collection.new(block_cells)
       @block_solutions = @block.solutions
       @block.cells.each {|c| c.update_cell_val(@block_solutions)}
-      # @block.cells.each {|c| print "Cell ID: #{c.id} Values: #{c.values}\n"}
     end
 
     it "can add cells" do
@@ -98,28 +97,36 @@ module Sudoku
       @collection1.cell(5).solution.must_equal 5
     end
 
-    it "can detect a triples match" do
-      a = [1,2,3]
-      b = [1,3]
-      @collection1.triples_match(a,b).must_equal true
-    end
-
     it "can detect triples cells" do
-      @collection1.cell(1).update_cell_val([1,3])
-      @collection1.cell(3).update_cell_val([3,5])
-      @collection1.cell(5).update_cell_val([1,3,5])
+      @collection1.cell(1).update_cell_val([7,9]) # can be 1, 3, 5
+      @collection1.cell(3).update_cell_val([1,7,9]) # can be 3, 5
+      @collection1.cell(5).update_cell_val([5,7,9]) # can be 1, 3
       triples_ids = []
       @collection1.triples_cells.each {|c| triples_ids << c.id}
       triples_ids.must_equal [1,3,5]
     end
 
+    it "can create collection combinations" do
+      @collection1.cell(1).update_cell_val([7,9]) # can be 1, 3, 5
+      @collection1.cell(3).update_cell_val([1,7,9]) # can be 3, 5
+      @collection1.cell(5).update_cell_val([5,7,9]) # can be 1, 3
+      @collection1.combination_values.values.must_equal [[[1, 3, 5], [3, 5], [1, 3]]]
+    end
+
+    it "can create combinations values" do
+      @collection1.cell(1).update_cell_val([7,9]) # can be 1, 3, 5
+      @collection1.cell(3).update_cell_val([1,7,9]) # can be 3, 5
+      @collection1.cell(5).update_cell_val([5,7,9]) # can be 1, 3
+      puts @collection1.potential_triplet_combos
+    end
+      
+
     it "can solve by triples" do 
-      @collection1.cell(1).update_cell_val([1,3])
-      @collection1.cell(3).update_cell_val([3,5])
-      @collection1.cell(5).update_cell_val([1,3,5])
-      @collection1.cell(7).set_solution(7)
+      @collection1.cell(1).update_cell_val([7,9]) # can be 1, 3, 5
+      @collection1.cell(3).update_cell_val([1,7,9]) # can be 3, 5
+      @collection1.cell(5).update_cell_val([5,7,9]) # can be 1, 3
       @collection1.solve_by_triples
-      @collection1.cell(9).solution.must_equal 9
+      @collection1.cell(9).values.must_equal [7,9]
     end
   end
 end

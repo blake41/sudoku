@@ -34,12 +34,12 @@ module Sudoku
       @cell1.values.must_equal [8,9]
     end
 
-    it "must be able to find triples matches" do
-      @cell1.update_cell_val([1,2,3,4,5,6])
-      @cell1.triples_match([7,8,9]).must_be true
+    it "must be able to identify triples" do
+      @cell1.update_cell_val([1,2,3,4,5,6,7])
+      @cell1.is_a_triple?([7,8,9]).must_equal true
 
-      @@cell2.update_cell_val([1,2,3,4,5,6,7])
-      @cell2.triples_match([7,8,9]).must_be true
+      @cell2.update_cell_val([1,2,3,4,5])
+      @cell2.is_a_triple?([7,8,9]).must_equal false
     end
 
     it "must be able to update values for triples" do
@@ -47,9 +47,9 @@ module Sudoku
       @cell1.update_cell_triples([7,8,9])
       @cell1.values.must_equal [6]
 
-      @cell2.update_cell_val([1,2,3,4,5,7])
+      @cell2.update_cell_val([1,2,3,4,5,6])
       @cell2.update_cell_triples([7,8,9])
-      @cell2.values.must_equal [8,9]
+      @cell2.values.must_equal [7,8,9]
     end
 
     it "must return the correct row head ID" do
