@@ -1,3 +1,5 @@
 This is a basic text based sudoku game.  It allows a user to play an existing sudoku board or create their own.
 
 The application also includes a solver algorithm, which currently can solve many, but not all sudoku puzzles.
+
+To Play:  "ruby bin/play_sudoku.rb"
