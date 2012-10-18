@@ -1,4 +1,4 @@
-require '../lib/sudoku/game.rb'
+require_relative '../lib/sudoku/game.rb'
 
 module Sudoku
 
