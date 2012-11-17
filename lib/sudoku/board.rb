@@ -13,7 +13,7 @@ module Sudoku
     # possible solutions.
       @cells = []
       @solutions = []
-
+# Cleaner approach is Array.new(81, Cell.new(id))
       id = 1; while id <= 81 
         @cells << (Cell.new(id))
         id += 1
@@ -24,6 +24,11 @@ module Sudoku
     # Populates board with pre-populated two-dimensional hash
     # Blank cells are represented by 0's in the hash.
       r = 1; id = 1
+  # the ruby way to do this is to use enumerators
+  # (0..9) creates a range which has the enumerator module mixed in then you can call each on it
+  # (0..9).each do |i|
+  #   do some work
+  # end
       until r == 10
         c = 0
         until c == 9
@@ -55,6 +60,10 @@ module Sudoku
                 
     def row id 
     # Single cell ID as an arg and returns entire row the cell is part of.
+    # seems kind of strange to me that board inherits from collection.  it seems like 
+    # the way you use collection is as a way to operate on a bunch of cells
+    # my guess is collection should just be on its own.  if a board needs some methods that it's getting from collection
+    # maybe collection is a module that contains the behavoir of multiple cells and gets mixed into board?
       row = Collection.new
       cur_cell = self.cell(id)
       row_head_id = cur_cell.row_head_id

@@ -3,6 +3,11 @@ module Sudoku
     attr_reader :mild, :medium, :spicy, :en_fuego
     
     def initialize
+      # this looks like each of these board types should be a subclass of existing.
+      # your loading a whole bunch of data into memory here before we know which type of board the user wants
+      # also is this really best represented by a hash? it seems awkward
+      # what about an array of arrays
+      # ary = [[8,2,0,3,0,0,0,0,0], [0,1,4,0,0,9,0,0,0], etc, etc]
       @mild = {}  
       @mild[1] = [8,2,0,3,0,0,0,0,0]
       @mild[2] = [0,1,4,0,0,9,0,0,0]

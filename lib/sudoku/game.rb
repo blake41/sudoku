@@ -1,8 +1,9 @@
 require_relative 'board'
 require_relative 'populated_board'
-
+require 'debugger'
 module Sudoku
   class Game
+    # these are used so you can call self.board, but i dont think you ever do that
     attr_accessor :board, :beginning_board, :player
 
     def initialize
@@ -28,6 +29,8 @@ module Sudoku
     # the beginning board
     # No validations exist to ensure a user generated board is valid or solvable.
       puts "Hi. Welcome to the Sudoku Arena.  Would you like to play an existing board or create your own?  ('existing' / 'own')"
+# not sure what the loop is here for, the gets method is a "blocking" call. meaning it will sit and wait for input and only 
+# continue execution once it gets input, so remove the loop and break
       loop do
         type = gets.chomp.downcase
         case type
@@ -48,12 +51,21 @@ module Sudoku
 
     def setup_existing_board
     # User chooses difficulty level.
+    # so board should = Mild.new 
+    # class Mild < Existing
+    #   def init
+    #     whatever it looks like
+    #   end
+    # end
+
       board = Existing.new
       puts "\n" << "So you want to use an existing board.  What level are you in the mood for?  ('mild', 'medium', 'spicy', or 'en fuego')"
       loop do
         difficulty = gets.chomp.downcase
         case difficulty
         when 'mild'
+# its not clear to me why populate board takes a type of board and then converts it to the board data structure with cells
+# shouldnt the preset boards already be set up correctly with cells
           @board.populate_board(board.mild)
           self.set_board
           break
@@ -129,8 +141,14 @@ module Sudoku
     end
 
     def create_beginning_board
+      # dont use instance variable set, you should have a getter and setter to do this
+      # your using ruby tricks to get around your objects api
+      debugger
       beginning_cells = []
       @board.cells.each {|c| beginning_cells << c.dup}
+      # couldnt we just call @beginning_board.clone (im not 100 on clone vs dup)
+      # i also think whenever you set @board, you should just set @beginning board to the same thing and 
+      # these boards should be all preset at that time
       @beginning_board.instance_variable_set(:@cells, beginning_cells)
     end
 
@@ -176,6 +194,7 @@ module Sudoku
       self.setup_custom_board
     end
 
+# this is stylistic but i really prefer parenthesis around arguments to a function
     def add_row row=[], row_id
       @board.add_board_row(row, row_id)
     end
@@ -185,16 +204,30 @@ module Sudoku
       row = []
       str.split(',').each {|v| row << v.to_i}
       row
+      # tap is cool to do this
+      # row = [].tap do |array|
+        # whatever
+      # end
     end
 
     def validate_row row
     # Basic validation for user generated row.
+    # we don't really ever validate types in ruby, we valid the interface
+    # so check like row.respond_to?("length") or whatever methods you want the object to respond to
+    # we dont care in ruby what class an object is, just that it implements the methods we want to call on it
       return false unless row.class == Array
-        return false unless row.length == 9
-          row.each do |value|
-            return false unless value.class == Fixnum
-            return false unless value >=0 && value <= 9
-          end
+      # dont indent, your not actually in any block
+      return false unless row.length == 9
+      row.each do |value|
+        # so maybe here you should check that things respond to + or whatever you care about for sudoku
+        return false unless value.class == Fixnum
+        return false unless value >=0 && value <= 9
+      end
+      # also you can name these checks and do something like this
+      # ["validate_class", "validate_range", "etc"].each do |validation|
+      #   return false unless self.send("validation")
+      # end
+      # this way it's clearer what the checks are if they're well named and you can easily add more to the array
     end
 
   #################################################################
@@ -208,6 +241,7 @@ module Sudoku
         puts "What is the ID of the cell you want to set?"
         answer = gets.chomp.downcase.to_i
         if answer.between?(1,81)
+          # use puts here?
           print "\n" << "Cell #{answer} is in column #{@board.cell(answer).col_head_id} and row #{@board.cell(answer).row_head_id/9+1}.  "
           if @board.cell(answer).solution.nil?
             puts "It is currently unsolved."
